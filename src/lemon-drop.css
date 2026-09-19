@@ -1,0 +1,28 @@
+/* One continuous FLIP-style journey of the real header image; no duplicate logo. */
+.lemon-drop { position:fixed; inset:0; z-index:30; background:var(--butter); opacity:0; visibility:hidden; pointer-events:none; }
+.lemon-drop.is-playing { visibility:visible; }
+header.lemon-travelling { z-index:40; }
+header.lemon-travelling .brand img { pointer-events:none; }
+header .brand { position:relative; }
+header .brand img { flex-shrink:0; }
+.tea-ripple { position:absolute; top:37%; left:50%; width:160px; height:160px; border:1px solid var(--ink); border-radius:50%; opacity:0; transform:translate(-50%,-50%); }
+.drop-sparkle { position:absolute; top:calc(37% - 72px); left:calc(50% + 74px); color:var(--ink); font-size:28px; line-height:1; }
+.drop-tagline { position:absolute; top:calc(37% + 100px); left:5%; width:90%; text-align:center; font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:clamp(26px,3.1vw,44px); line-height:1.4; letter-spacing:-.035em; }
+.drop-tagline span { display:block; }
+/* The intro owns the hero timeline, avoiding two competing entrance sequences. */
+.hero .hero-line, .hero .hero-description, .hero .hero-actions > *, .hero .hero-art img, .hero .hero-art .handwritten, .hero .hero-art .art-star { animation:none; }
+header .brand::after { content:'✦'; position:absolute; top:-5px; left:40px; font-size:15px; opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion:no-preference) {
+  header .brand img { transition:rotate 220ms ease-out; }
+  header .brand.lemon-clicked::after { animation:header-sparkle 520ms ease-out; }
+  @media (hover:hover) and (pointer:fine) {
+    header:not(.lemon-travelling) .brand:hover img { rotate:-7deg; }
+  }
+}
+@media(max-width:760px) {
+  .tea-ripple { top:35%; width:100px; height:100px; }
+  .drop-sparkle { top:calc(35% - 48px); left:calc(50% + 47px); font-size:21px; }
+  .drop-tagline { top:calc(35% + 70px); font-size:clamp(22px,6vw,30px); }
+}
+@media(prefers-reduced-motion:reduce) { .lemon-drop { display:none!important; } }
+@keyframes header-sparkle { 0% { opacity:0; transform:scale(.3) rotate(-20deg); } 40% { opacity:1; transform:scale(1.1) rotate(5deg); } 100% { opacity:0; transform:scale(.8) rotate(0); } }

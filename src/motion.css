@@ -1,0 +1,78 @@
+/* Motion layer only. Final layout and copy are owned by the existing stylesheet. */
+.hero-line { display: inline-block; }
+.contact { position: relative; }
+.contact-flourish { position: absolute; top: 80px; right: 10%; width: 88px; height: 88px; pointer-events: none; }
+.contact-flourish img { width: 100%; height: 100%; border-radius: 50%; }
+.contact-flourish span { position: absolute; right: -18px; top: -8px; color: var(--butter); font-size: 26px; }
+.contact .handwritten { position: relative; width: fit-content; margin-left: auto; margin-right: auto; }
+.contact .handwritten::after { content: ''; position: absolute; bottom: 2px; left: 8%; right: 8%; height: 1px; background: var(--butter); transform-origin: left; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-line { animation: headline-arrive 760ms cubic-bezier(.22,1,.36,1) backwards; }
+  .hero-line-one { animation-delay: 60ms; }
+  .hero-line-two { animation-delay: 180ms; }
+  .hero-line-three { animation-name: italic-arrive; animation-delay: 300ms; transform-origin: left bottom; }
+  .hero-description { animation: soft-arrive 650ms 430ms ease-out backwards; }
+  .hero-actions > :first-child { animation: soft-arrive 650ms 550ms ease-out backwards; }
+  .hero-actions > :last-child { animation: soft-arrive 650ms 650ms ease-out backwards; }
+  .hero-art img { animation: lemon-arrive 1100ms 200ms cubic-bezier(.22,1,.36,1) backwards, lemon-breathe 2600ms 1300ms ease-in-out 1; }
+  .hero-art .handwritten { animation: ink-reveal 750ms 850ms ease-out backwards; }
+  .hero-art .art-star { animation: sparkle-arrive 650ms 1050ms cubic-bezier(.22,1,.36,1) backwards; }
+  .button, .nav-cta, .project-visual { transition: transform 300ms cubic-bezier(.22,1,.36,1), background-color 300ms, color 300ms; }
+  .button span, .nav-cta span, .text-link span, .circle-arrow > span, .contact-links a span { display: inline-block; transition: transform 300ms cubic-bezier(.22,1,.36,1); }
+  .project-lemon { transition: transform 600ms cubic-bezier(.22,1,.36,1); }
+  .service-row { transition: background-color 300ms; }
+  .service-row h3, .service-row .number { transition: transform 350ms cubic-bezier(.22,1,.36,1); }
+  .service-row:nth-child(1) { --turn: -30deg; }
+  .service-row:nth-child(2) { --turn: 90deg; }
+  .service-row:nth-child(3) { --turn: -60deg; }
+  .service-row:nth-child(4) { --turn: 135deg; }
+  .service-row:nth-child(5) { --turn: 180deg; }
+  .brew-arrived .contact-flourish img { animation: signature-roll 1000ms cubic-bezier(.22,1,.36,1) backwards; }
+  .brew-arrived .contact-flourish span { animation: sparkle-arrive 650ms 650ms cubic-bezier(.22,1,.36,1) backwards; }
+  .brew-arrived .handwritten::after { animation: underline-draw 700ms 850ms cubic-bezier(.22,1,.36,1) backwards; }
+  .project-dialog[open] { animation: dialog-arrive 220ms ease-out; }
+  .project-dialog[open]::backdrop { animation: backdrop-arrive 220ms ease-out; }
+  .button:focus-visible span, .nav-cta:focus-visible span, .project-visual:focus-visible .circle-arrow > span { transform: translate(3px,-3px); }
+  .button:active, .nav-cta:active { transform: translateY(1px) scale(.98); }
+  .project-visual:active { transform: scale(.992); }
+  .service-row:active { background-color: var(--butter); }
+  @media (hover: hover) and (pointer: fine) {
+    .button:hover span, .nav-cta:hover span, .contact-links a:hover span, .project-visual:hover .circle-arrow > span { transform: translate(3px,-3px); }
+    .project-visual:hover { transform: translateY(-3px); }
+    .project-protein .project-visual:hover { background: var(--butter); }
+    .project-avishi .project-visual:hover { background: var(--cream); }
+    .project-visual:hover .project-lemon { transform: rotate(8deg) scale(1.035); }
+    .service-row:hover { background-color: var(--butter); }
+    .service-row:hover h3 { transform: translateX(5px); }
+    .service-row:hover .service-star { transform: rotate(var(--turn)); }
+    .contact:has(.button:hover) .contact-flourish img, .contact:has(.button:focus-visible) .contact-flourish img { animation: lemon-nod 600ms ease-in-out; }
+  }
+  @media (max-width:760px) {
+    .hero-line { animation-duration: 560ms; }
+    .hero-art img { animation: lemon-arrive 850ms 200ms cubic-bezier(.22,1,.36,1) backwards; }
+    .brew-arrived .contact-flourish img { animation-name: lemon-small-arrive; animation-duration: 650ms; }
+  }
+}
+@media (max-width:760px) {
+  .contact-flourish { top: 16px; right: 24px; width: 34px; height: 34px; }
+  .contact-flourish span { right: -12px; top: -5px; font-size: 16px; }
+}
+@media (hover:none) {
+  .project-visual:hover .project-display, .button:hover, .text-link:hover span, .service-row:hover .service-star { transform: none; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .button:hover, .text-link:hover span, .project-visual:hover .project-display, .service-row:hover .service-star { transform: none; }
+}
+@keyframes headline-arrive { from { opacity: .15; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes italic-arrive { from { opacity: .15; transform: translateY(24px) rotate(-1.5deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+@keyframes soft-arrive { from { opacity: .2; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes lemon-arrive { from { opacity: .1; transform: translateY(18px) rotate(-27deg) scale(.94); } to { opacity: 1; transform: translateY(0) rotate(-13deg) scale(1); } }
+@keyframes lemon-breathe { 0%,100% { transform: translateY(0) rotate(-13deg); } 50% { transform: translateY(-7px) rotate(-10deg); } }
+@keyframes ink-reveal { from { clip-path: inset(0 100% 0 -10%); opacity: .3; } to { clip-path: inset(-10% -10% -10% -10%); opacity: 1; } }
+@keyframes sparkle-arrive { from { opacity: 0; transform: rotate(-45deg) scale(.4); } 65% { opacity: 1; transform: rotate(8deg) scale(1.12); } to { opacity: 1; transform: rotate(0) scale(1); } }
+@keyframes signature-roll { from { opacity: 0; transform: translateX(-45px) rotate(-55deg); } 75% { opacity: 1; transform: translateX(2px) rotate(4deg); } to { opacity: 1; transform: translateX(0) rotate(0); } }
+@keyframes lemon-small-arrive { from { opacity: 0; transform: translateY(8px) rotate(-12deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+@keyframes underline-draw { from { transform: scaleX(0) rotate(-1deg); } to { transform: scaleX(1) rotate(0); } }
+@keyframes lemon-nod { 0%,100% { transform: rotate(0); } 40% { transform: rotate(-9deg); } 70% { transform: rotate(4deg); } }
+@keyframes dialog-arrive { from { opacity: .4; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes backdrop-arrive { from { opacity: 0; } to { opacity: 1; } }
