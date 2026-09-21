@@ -38,3 +38,12 @@ Limitations: no real-device/Safari/Firefox test or formal accessibility audit. E
 - Reduced motion skips the sequence; changing the preference during playback also cancels it.
 - Without JavaScript the intro stays hidden and prerendered page content stays visible.
 - Cold-load layout-shift scores were below 0.012 in desktop/mobile checks (not zero; external font loading is still present). The intro elements are fixed or transform-only and do not add document flow space.
+
+## Supplied opening film
+
+- Trimmed the supplied 477 MB MOV to its first 0.8 seconds and encoded a 679 KB 720p M4V for the website.
+- The original MOV is ignored by Git; only the web-optimised clip is placed in `public/assets`.
+- Production build and prerender pass with no new dependencies.
+- Chrome checks pass at 1440×1000 and 390×844: muted inline playback advances, exits in under one second, reveals the hero and adds no horizontal overflow.
+- Repeat visits skip the film; `?intro=1` provides an explicit replay path.
+- Reduced-motion, keyboard interruption and no-JavaScript fallback checks pass.
