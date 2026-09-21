@@ -24,7 +24,7 @@ npm run preview
 - `src/style.css`: brand palette, typography, layouts, mobile breakpoints, focus states and reduced-motion settings.
 - `src/App.tsx`: existing reusable brand, section-heading and project-detail components and page structure. `src/main.tsx` hydrates the production HTML or mounts the development preview.
 - `index.html`: document title, search and social metadata, favicon and font loading. Update these alongside content changes.
-- `public/assets`: original source PDFs and optimized lossless logo conversion. The original logo is preserved, including its background colour, without redrawing or recolouring. The rest of the site uses the four specified colours.
+- `public/assets`: original source PDFs, optimized lossless logo conversion and optimized WebP creator portraits. The original logo is preserved, including its background colour, without redrawing or recolouring. The rest of the site uses the four specified colours.
 
 Fonts are Playfair Display, Inter and Caveat, loaded through Google Fonts with display=swap and local fallbacks. These families are openly licensed; no proprietary font files are bundled. External font requests need connectivity; the page remains usable without them.
 
@@ -39,19 +39,16 @@ Sources: the supplied `offerings.pdf` (2026 snapshot) and the implementation bri
 - The source's 360K+ "combined organic reach" is presented as combined followers and subscribers. Its listed figures total 362.5K across accounts/platforms. This is not unique reach; audiences can overlap.
 - 60+ brand collaborations and five product launches are attributed to Avishi, not presented as agency client counts.
 - Protein Mummy is clearly labelled managed creator work. 213K Instagram followers, 3.7M+ monthly views and 10M+ Air Fryer series views are source-reported.
-- Capri Sports is the documented client name. The brief also mentions Playdate, but the one-pager does not establish that relationship. Confirm the name before adding it.
-- Capri's phases and deliverables are described; no revenue, sales, conversion or campaign-performance improvement is claimed.
+- Capri Sports is deliberately excluded from the public website at the user's request. Do not restore it without explicit publication approval.
 - The 90–100 creator roster is omitted pending clarification of membership/availability. No exclusive representation or guaranteed availability is implied.
 - Creator Instagram URLs are derived from the exact handles in the one-pager; account ownership, current availability and profile counts were not independently verified. Confirm before publication.
 - FUYL, unsigned prospects, testimonials, invented client logos, stock project photographs and fabricated outcomes are excluded.
 
 ## Items to add or confirm before publishing
 
-1. Real project photos/screenshots and permission to publish them. Current project covers are intentionally typography-led, not mockups. To introduce imagery, add optional image/alt fields to the project schema and render them in the card/dialog.
-2. Real team portraits, if desired. Current profiles use text and initials.
-3. Confirm Capri Sports / Playdate naming and the roster claim if needed.
-4. Confirm current metrics, profile URLs and the supplied email/WhatsApp number.
-5. Supply the final domain, then add a canonical URL, og:url and absolute share-image URL to `index.html`. No domain or share image is invented.
+1. Confirm current metrics, profile URLs and the supplied email/WhatsApp number.
+2. Supply the final domain, then add a canonical URL, og:url and absolute share-image URL to `index.html`. No domain or share image is invented.
+3. Add client work only after explicit approval to name the client and publish the scope.
 
 The mail CTA opens an email draft with a prefilled enquiry subject. WhatsApp opens the number explicitly supplied in the one-pager. No booking link, contact form or submission backend is included.
 

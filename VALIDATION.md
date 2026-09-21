@@ -38,3 +38,13 @@ Limitations: no real-device/Safari/Firefox test or formal accessibility audit. E
 - Reduced motion skips the sequence; changing the preference during playback also cancels it.
 - Without JavaScript the intro stays hidden and prerendered page content stays visible.
 - Cold-load layout-shift scores were below 0.012 in desktop/mobile checks (not zero; external font loading is still present). The intro elements are fixed or transform-only and do not add document flow space.
+
+## Offering and content revision
+
+- The first section after the hero now presents exactly two core offerings: Social Media Management and Personal Branding.
+- Each wing lists its audience, role, scope and five concrete deliverables; shared capabilities are secondary.
+- Hero and contact copy state the commercial offer directly. Brand accents are standardized to “Brewing stories.” and “when life gives you lemons, make lemon tea.”
+- Capri Sports is absent from rendered text and project data.
+- Avishi, Kritarth and Protein Mummy photos were optimized to WebP (45–82 KB) and verified in their team/project placements.
+- Production browser checks pass at 1440, 768, 390 and 320 pixels with no horizontal overflow.
+- Both remaining project dialogs, reduced-motion behavior and image loading pass.
