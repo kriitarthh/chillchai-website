@@ -8,7 +8,7 @@ export function useStudioMotion() {
     const animations = new Set<Animation>();
     const seen = new WeakSet<Element>();
     const targets = document.querySelectorAll<HTMLElement>(
-      '.section h2, .difference-copy, .proof-grid > div, .wing-card, .project, .team-grid article, .process-grid article, .contact .handwritten, footer > .handwritten'
+      '.section h2, .founder-photo-wrap, .founder-copy, .proof-grid > div, .wing-card, .wing-service, .project, .team-grid article, .process-grid article, .contact-body, footer > .handwritten'
     );
     const stop = () => {
       observer?.disconnect();
@@ -32,7 +32,7 @@ export function useStudioMotion() {
           if (!element.animate) continue;
           const mobile = window.matchMedia('(max-width: 760px)').matches;
           const siblings = Array.from(element.parentElement?.children ?? []);
-          const staggered = element.matches('.proof-grid > div, .wing-card, .team-grid article, .process-grid article');
+          const staggered = element.matches('.proof-grid > div, .wing-card, .wing-service, .team-grid article, .process-grid article');
           const delay = staggered ? Math.min(siblings.indexOf(element), 3) * (mobile ? 35 : 65) : 0;
           const animation = element.animate(
             [{ opacity: .35, transform: `translateY(${mobile ? 10 : 22}px)` }, { opacity: 1, transform: 'translateY(0)' }],
