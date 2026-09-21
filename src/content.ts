@@ -1,6 +1,7 @@
 // All visitor-facing copy, contact details and project records live here.
 // Evidence: supplied offerings.pdf (2026 snapshot) and the user's website brief.
 export const content = {
+ intro: {firstLine:'when life gives you lemons...',secondLine:'make lemon tea.'},
  brand: {name:'Chillchai', descriptor:'CREATIONS', tagline:'when life gives you lemons, make lemon tea.', logo:'/assets/logo.webp'},
  nav:[['Home','home'],['About','about'],['What We Do','services'],['Our Work','work'],['Contact','contact']],
  ui:{talk:"Let’s Talk",menu:'Menu',close:'Close',skip:'Skip to content',project:'Explore the project',back:'Back to all work',context:'The context',role:'Our role',approach:'The approach',outcomes:'The receipts',source:'Figures from our 2026 brand one-pager; a snapshot, not a live count.',top:'Back to top',copyright:'Chillchai Creations',viewProfile:'Visit creator profile',enquirySubject:'Let’s brew something together — project enquiry'},

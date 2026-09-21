@@ -1,121 +1,111 @@
 import { useEffect, useRef } from 'react';
+import { content } from './content';
 import './lemon-drop.css';
 
-const VISITED = 'chillchai:intro-film:v1';
+const VISITED = 'chillchai:lemon-drop:v1';
 const ease = 'cubic-bezier(.22,1,.36,1)';
 
 export function LemonDrop() {
   const layer = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const overlay = layer.current;
-    const video = overlay?.querySelector<HTMLVideoElement>('video');
-    const brand = document.querySelector<HTMLAnchorElement>('header .brand');
-    const logo = brand?.querySelector<HTMLImageElement>('img');
-    if (!overlay || !video || !brand || !logo) return;
-
-    const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+    const header = document.querySelector('header');
+    const logo = header?.querySelector<HTMLImageElement>('.brand img');
+    const brand = header?.querySelector<HTMLAnchorElement>('.brand');
+    if (!overlay || !header || !logo || !brand || !logo.animate) return;
+    const media = matchMedia('(prefers-reduced-motion: reduce)');
     const animations = new Set<Animation>();
-    let hideTimer = 0;
-    let revealTimer = 0;
+    let frame = 0;
+    let timer = 0;
     let running = false;
-
+    let disposed = false;
     const animate = (element: Element, frames: Keyframe[], options: KeyframeAnimationOptions) => {
-      const animation = element.animate(frames, options);
-      animations.add(animation);
-      animation.onfinish = () => animations.delete(animation);
-      return animation;
+      const a = element.animate(frames, options);
+      animations.add(a);
+      a.onfinish = () => animations.delete(a);
+      return a;
     };
-
-    const revealHero = () => {
-      const mobile = innerWidth <= 760;
-      document.querySelectorAll('.hero-line, .hero-description, .hero-actions > *').forEach((element, index) => {
-        animate(
-          element,
-          [{ opacity: .08, transform: `translateY(${mobile ? 8 : 16}px)` }, { opacity: 1, transform: 'none' }],
-          { duration: mobile ? 360 : 480, delay: index * 38, fill: 'backwards', easing: ease }
-        );
-      });
-      const art = document.querySelector('.hero-art');
-      if (art) animate(art, [{ opacity: .1 }, { opacity: 1 }], { duration: 420, fill: 'backwards', easing: ease });
-    };
-
     const finish = () => {
-      if (!running) return;
       running = false;
-      window.clearTimeout(hideTimer);
-      window.clearTimeout(revealTimer);
-      video.pause();
-      overlay.classList.add('is-leaving');
-      revealHero();
-      hideTimer = window.setTimeout(() => {
-        overlay.classList.remove('is-playing', 'is-leaving');
-      }, 260);
+      clearTimeout(timer);
+      animations.forEach(a => a.cancel());
+      animations.clear();
+      overlay.classList.remove('is-playing');
+      header.classList.remove('lemon-travelling');
     };
-
-    const start = async () => {
-      const replay = new URLSearchParams(location.search).get('intro') === '1';
+    const start = () => {
+      if (disposed || media.matches || scrollY > 20 || (location.hash && location.hash !== '#home')) return;
       let visited = false;
       try { visited = localStorage.getItem(VISITED) === 'seen'; } catch { /* Storage is optional. */ }
-      if (motionPreference.matches || scrollY > 20 || (location.hash && location.hash !== '#home')) return;
+      const replay = new URLSearchParams(location.search).get('intro') === '1';
+      const hero = document.querySelectorAll('.hero-line, .hero-description, .hero-actions > *');
       if (visited && !replay) {
-        revealHero();
+        hero.forEach(el => animate(el, [{opacity:.65,transform:'translateY(5px)'},{opacity:1,transform:'none'}],{duration:280,easing:ease}));
         return;
       }
-
       try { localStorage.setItem(VISITED, 'seen'); } catch { /* A blocked store must not block the page. */ }
-      video.currentTime = 0;
       running = true;
       overlay.classList.add('is-playing');
-      try {
-        await video.play();
-      } catch {
-        finish();
-        return;
-      }
-      revealTimer = window.setTimeout(finish, 720);
+      header.classList.add('lemon-travelling');
+      const mobile = innerWidth <= 760;
+      const size = mobile ? 88 : 142;
+      const bounds = logo.getBoundingClientRect();
+      const x = innerWidth / 2 - (bounds.left + bounds.width / 2);
+      const centreY = innerHeight * (mobile ? .35 : .37);
+      const y = centreY - (bounds.top + bounds.height / 2);
+      const scale = size / bounds.width;
+      const pose = (dy: number, rotation = 0) => `translate(${x}px, ${y+dy}px) scale(${scale}) rotate(${rotation}deg)`;
+      const above = -centreY-size;
+      // Animate the actual navbar image, not a copy: it ends at its own DOM position.
+      animate(logo, [
+        {transform:pose(above,-10),offset:0,easing:'cubic-bezier(.45,0,.75,.55)'},
+        {transform:pose(0,0),offset:.25,easing:'cubic-bezier(.15,.6,.35,1)'},
+        {transform:pose(mobile?-13:-24,4),offset:.32,easing:'cubic-bezier(.45,0,.8,.6)'},
+        {transform:pose(0,0),offset:.40},
+        {transform:pose(0,0),offset:.64,easing:ease},
+        {transform:'translate(0,0) scale(1) rotate(0)',offset:1}
+      ], {duration:2000,fill:'backwards'});
+      animate(overlay,[{opacity:1,offset:0},{opacity:1,offset:.70},{opacity:0,offset:1}],{duration:1700,fill:'forwards'});
+      const ripple = overlay.querySelector('.tea-ripple')!;
+      animate(ripple,[{opacity:0,transform:'translate(-50%,-50%) scale(.35)'},{opacity:.28,offset:.18},{opacity:0,transform:'translate(-50%,-50%) scale(1.8)'}],{duration:850,delay:480,easing:'ease-out',fill:'backwards'});
+      animate(overlay.querySelector('.drop-sparkle')!,[{opacity:0,transform:'scale(.3) rotate(-25deg)'},{opacity:1,transform:'scale(1.12) rotate(5deg)',offset:.6},{opacity:1,transform:'scale(1) rotate(0)'}],{duration:350,delay:570,fill:'backwards',easing:ease});
+      overlay.querySelectorAll('.drop-tagline span').forEach((el,i)=>animate(el,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)',offset:.42},{opacity:1,transform:'translateY(0)',offset:.75},{opacity:0,transform:'translateY(-4px)'}],{duration:710-i*210,delay:590+i*210,fill:'both',easing:ease}));
+      hero.forEach((el,i)=>animate(el,[{opacity:.02,transform:`translateY(${mobile?10:20}px)`},{opacity:1,transform:'none'}],{duration:510,delay:1220+i*45,fill:'backwards',easing:ease}));
+      const art = document.querySelector('.hero-art');
+      if (art) animate(art,[{opacity:0},{opacity:1}],{duration:480,delay:1450,fill:'backwards'});
+      timer = window.setTimeout(finish, 2020);
     };
-
+    // Let React's development effect cleanup run before starting or recording a visit.
+    frame = requestAnimationFrame(start);
+    const interrupt = () => { if (running) finish(); };
+    const preferenceChanged = () => { if (media.matches) finish(); };
     const bounce = () => {
       if (running) finish();
-      if (motionPreference.matches) return;
-      logo.getAnimations().forEach(animation => animation.cancel());
-      animate(
-        logo,
-        [{ transform: 'translateY(0) rotate(0)' }, { transform: 'translateY(-7px) rotate(-7deg)', offset: .38 }, { transform: 'translateY(0) rotate(0)' }],
-        { duration: 480, easing: ease }
-      );
+      if (media.matches) return;
+      logo.getAnimations().forEach(a => a.cancel());
+      animate(logo,[{transform:'translateY(0) rotate(0)'},{transform:'translateY(-7px) rotate(-7deg)',offset:.38},{transform:'translateY(0) rotate(0)'}],{duration:480,easing:ease});
       brand.classList.remove('lemon-clicked');
       void brand.offsetWidth;
       brand.classList.add('lemon-clicked');
     };
-
-    const interrupt = () => finish();
-    const preferenceChanged = () => { if (motionPreference.matches) finish(); };
     const clearSparkle = () => brand.classList.remove('lemon-clicked');
-    const frame = requestAnimationFrame(start);
-
-    brand.addEventListener('click', bounce);
+    brand.addEventListener('click', bounce); // Preserve the existing #home link action.
     brand.addEventListener('animationend', clearSparkle);
-    motionPreference.addEventListener('change', preferenceChanged);
+    media.addEventListener('change', preferenceChanged);
     window.addEventListener('resize', interrupt);
-    window.addEventListener('scroll', interrupt, { passive: true });
-    window.addEventListener('wheel', interrupt, { passive: true });
-    window.addEventListener('touchmove', interrupt, { passive: true });
+    window.addEventListener('scroll', interrupt, {passive:true});
+    window.addEventListener('wheel', interrupt, {passive:true});
+    window.addEventListener('touchmove', interrupt, {passive:true});
     document.addEventListener('pointerdown', interrupt, true);
     document.addEventListener('keydown', interrupt, true);
-
     return () => {
+      disposed = true;
       cancelAnimationFrame(frame);
-      window.clearTimeout(hideTimer);
-      window.clearTimeout(revealTimer);
-      video.pause();
-      animations.forEach(animation => animation.cancel());
-      overlay.classList.remove('is-playing', 'is-leaving');
+      finish();
       clearSparkle();
       brand.removeEventListener('click', bounce);
       brand.removeEventListener('animationend', clearSparkle);
-      motionPreference.removeEventListener('change', preferenceChanged);
+      media.removeEventListener('change', preferenceChanged);
       window.removeEventListener('resize', interrupt);
       window.removeEventListener('scroll', interrupt);
       window.removeEventListener('wheel', interrupt);
@@ -124,12 +114,5 @@ export function LemonDrop() {
       document.removeEventListener('keydown', interrupt, true);
     };
   }, []);
-
-  return (
-    <div className="lemon-drop" ref={layer} aria-hidden="true">
-      <video muted playsInline preload="auto">
-        <source src="/assets/chillchai-intro.m4v" type="video/x-m4v" />
-      </video>
-    </div>
-  );
+  return <div className="lemon-drop" ref={layer} aria-hidden="true"><div className="tea-ripple"/><span className="drop-sparkle">✦</span><p className="drop-tagline"><span>{content.intro.firstLine}</span><span>{content.intro.secondLine}</span></p></div>;
 }

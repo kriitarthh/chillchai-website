@@ -65,12 +65,12 @@ The mail CTA opens an email draft with a prefilled enquiry subject. WhatsApp ope
 
 The site uses section anchors and modal details, so no route rewrite configuration is necessary. This project has not been publicly deployed.
 
-## Opening film
+## Lemon Drop signature opening
 
-`public/assets/chillchai-intro.m4v` is a web-optimised, 0.8-second extract from the supplied `assets/Chill Chai Intro.mov`. The original 477 MB source is retained locally and excluded from Git by `assets/*.mov`; only the 679 KB web clip is deployed.
+`src/LemonDrop.tsx` uses the existing native Web Animations API and animates the **actual header logo image** from the viewport centre back to its normal position. `src/lemon-drop.css` contains its isolated styling. The two intro lines are editable under `intro` in `src/content.ts`.
 
-`src/LemonDrop.tsx` plays the opening lemon burst for approximately 0.72 seconds, fades directly into the existing hero and leaves all page controls available. `src/lemon-drop.css` keeps the film full-screen on desktop and uses a tighter crop on mobile. The header lemon's finite hover/click interaction remains.
+The 2-second timeline includes a drop, one bounce, a sparkle, tea ripple, staggered italic tagline and continuous travel into the navbar. Hero elements reveal during the final movement. Mobile uses a smaller lemon and bounce. The existing header link keeps its original navigation and adds a finite bounce/sparkle on activation and a small hover tilt.
 
-A localStorage marker skips the film on subsequent visits. Append `?intro=1` to replay it for review. Reduced-motion users see the final page immediately, and any keyboard, pointer, scroll or resize interaction dismisses the film. The overlay receives no pointer events and stays hidden in server-rendered/no-JavaScript output.
+A localStorage visit marker skips the full sequence on subsequent visits (a 280ms hero reveal remains). Append `?intro=1` to replay for review. Reduced-motion users get the final state immediately, including when their preference changes mid-animation. Interaction, scroll, navigation and resizing cancel the intro immediately. The overlay never receives pointer events or keyboard focus, and it is hidden in server-rendered HTML. If storage is unavailable, the animation still works without persisting a visit marker.
 
-No libraries were added. The video is muted, inline and preloaded; the transition uses opacity and does not affect document layout.
+No libraries were added. The intro uses transforms and opacity with fixed overlay positioning; it does not move the underlying layout or wait on data/loading.
