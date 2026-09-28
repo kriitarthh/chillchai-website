@@ -140,8 +140,7 @@ export const content = {
   contact: {
     label: 'CONTACT / START A PROJECT', title: 'Let’s', italic: 'talk.',
     body: 'If you’re a brand launching soon, or a founder who wants to build a personal brand — we should talk. Tell us what you’re building.',
-    cta: 'Start a conversation', email: 'avishi@chillchai.in', phone: '+91 96676 71258',
-    whatsapp: 'https://wa.me/919667671258', whatsappLabel: 'Say hello on WhatsApp',
+    cta: 'Start a conversation', email: 'avishi@chillchai.in',
     note: 'Scoped to your project. Built around your story.',
   },
 };
