@@ -16,6 +16,7 @@ export const content = {
     ['About', 'about'],
     ['What We Do', 'services'],
     ['Our Work', 'work'],
+    ['Podcast', 'podcast'],
     ['Contact', 'contact'],
   ],
   ui: {
@@ -114,6 +115,17 @@ export const content = {
         outcomes: [['89.9K', 'YouTube subscribers'], ['41.5K', 'Instagram followers'], ['5', 'Products launched']], note: '60+ brand collaborations and 5,000+ units sold.',
         links: [{ label: '@avishimishh on Instagram', href: 'https://www.instagram.com/avishimishh/' }],
       },
+    ],
+  },
+  podcast: {
+    label: 'THE CHILLCHAI PODCAST', title: 'The Chillchai', italic: 'Podcast.',
+    show: 'Chillchai with Avishi',
+    description: 'Conversations about doing cool things at a young age — with the people who are actually doing it.',
+    videoId: 'loONu1DrdE4',
+    videoTitle: 'Chillchai with Avishi — podcast episode',
+    links: [
+      { label: 'Watch on YouTube', href: 'https://www.youtube.com/@chillchai' },
+      { label: 'Follow on Instagram', href: 'https://www.instagram.com/chillchai/' },
     ],
   },
   process: {
