@@ -40,10 +40,20 @@ function ProjectView({ project, onClose }: { project: Project | null; onClose: (
   </dialog>;
 }
 function PodcastCard() {
-  const [on, setOn] = useState(false);
-  return <div className="podcast-card" data-reveal>
-    {on ? <iframe src={`https://www.youtube-nocookie.com/embed/${c.podcast.videoId}?autoplay=1`} title={c.podcast.videoTitle} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
-      : <button onClick={() => setOn(true)} aria-label={`Play: ${c.podcast.videoTitle}`}><span className="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span><span className="podcast-show">{c.podcast.show}</span></button>}
+  const [mode, setMode] = useState<'idle' | 'muted' | 'sound'>('idle');
+  const box = useRef<HTMLDivElement>(null);
+  const id = c.podcast.videoId;
+  useEffect(() => {
+    const el = box.current; if (!el || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setMode(m => (m === 'idle' ? 'muted' : m)); io.disconnect(); } }, { threshold: .55 });
+    io.observe(el); return () => io.disconnect();
+  }, []);
+  return <div className="podcast-card" ref={box} data-reveal>
+    {mode !== 'idle' ? <iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=${mode === 'muted' ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`} title={c.podcast.videoTitle} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" />
+      : <button onClick={() => setMode('sound')} aria-label={`Play: ${c.podcast.videoTitle}`}>
+        <img src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`} alt="" loading="lazy" onError={e => { e.currentTarget.src = `https://i.ytimg.com/vi/${id}/mqdefault.jpg`; }} />
+        <span className="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg></span>
+      </button>}
   </div>;
 }
 
@@ -90,15 +100,15 @@ export default function App() {
       <button className="menu-btn" aria-expanded={menu} aria-controls="navigation" onClick={() => setMenu(!menu)}>{menu ? 'Close' : 'Menu'}</button>
     </header>
     <main id="main">
-      <section className="hero" id="home" data-theme="cream" data-sun="0,0,1.12,1">
-        <div className="hero-word" aria-hidden="true">{[...'chillchai'].map((ch, i) => <span key={i} style={{ ['--i' as string]: i }}>{ch}</span>)}</div>
+      <section className="hero" id="home" data-theme="cream">
+        <div className="hero-word" aria-hidden="true">{[...'chillchai'].map((ch, i) => <span key={i} className={ch === 'i' ? 'li' : undefined} style={{ ['--i' as string]: i }}>{ch === 'i' ? <>ı<svg className="lemon" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 20C5 12 12 7 20 7s15 5 15 13-7 13-15 13S5 28 5 20z" fill="#FFE75E" stroke="#1C1813" strokeWidth="2.2" transform="rotate(-25 20 20)"/><path d="M8 17c2-5 6-8 11-8" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity=".7"/><path d="M31 9c3-4 6-4 8-3-1 3-4 5-8 3z" fill="#5E9B3A" stroke="#1C1813" strokeWidth="1.6"/></svg></> : ch}</span>)}</div>
         <h1 className="hero-tag"><span className="sr-only">Chillchai Creations — </span><span className="l1">We build, manage &amp; grow social media</span><span className="l2">for <em>brands</em> and the <em>people</em> behind them.</span></h1>
         <p className="hero-tagline"><svg className="swoosh" viewBox="0 0 600 22" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 13 C 110 2, 230 21, 350 9 S 520 5, 596 12" /></svg><em>{c.brand.tagline}</em></p>
         <p className="hero-social" aria-label="Social links"><a href="https://www.instagram.com/chillchai/" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.youtube.com/@chillchai" target="_blank" rel="noreferrer">YouTube</a></p>
         <a className="scroll-cue" href="#services">Scroll<span aria-hidden="true">↓</span></a>
       </section>
 
-      <section className="section services" id="services" data-theme="cream" data-sun="0,0,.85,.16">
+      <section className="section services" id="services" data-theme="cream">
         <H2 a="Two wings." b="One story." />
         <article className="chapter" data-reveal>
           <div className="art-wrap"><EyeRing /></div>
@@ -110,14 +120,14 @@ export default function App() {
         </article>
       </section>
 
-      <section className="section numbers" id="numbers" data-theme="ink" data-sun="0,0,.85,.15">
+      <section className="section numbers" id="numbers" data-theme="ink">
         <p className="eyebrow">The story so far</p>
         <div className="big-number" data-reveal><span data-count="100">100</span><span className="plus">M+</span></div>
         <p className="big-caption" data-reveal>people reached through our channels, including multiple viral reels at <b>15M+</b>.</p>
         <dl className="stat-line">{stats.map(([v, l]) => <div key={l} data-reveal><dt>{v}</dt><dd>{l}</dd></div>)}</dl>
       </section>
 
-      <section className="section work" id="work" data-theme="cream" data-sun="0,0,.85,.12">
+      <section className="section work" id="work" data-theme="cream">
         <H2 a="Less pitch." b="More proof." />
         <ul className="work-list">
           {workRows.map((p, i) => <li key={p.id} data-reveal data-img={p.image || ''}><button onClick={() => setProject(p)} aria-label={`${c.ui.project}: ${p.name}`}><span className="wn">0{i + 1}</span><span className="wt">{p.name}</span><span className="wc">{p.category.split('/')[0].trim().toLowerCase()}</span><span className="ws">{p.outcomes[0]?.[0]}</span><span className="wa"><Arrow /></span>{p.image && <img className="wthumb" src={p.image} alt="" loading="lazy" />}</button></li>)}
@@ -126,7 +136,7 @@ export default function App() {
         <div className="work-peek" aria-hidden="true"><img alt="" /></div>
       </section>
 
-      <section className="section globe-sec" id="global" data-theme="ink" data-sun="0,0,.85,.08">
+      <section className="section globe-sec" id="global" data-theme="ink">
         <div className="globe-copy">
           <p className="eyebrow">Our reach</p>
           <H2 a="Based in India." b="Working with the US." />
@@ -135,23 +145,25 @@ export default function App() {
         <div className="globe-wrap" data-reveal><Globe /></div>
       </section>
 
-      <section className="section people" id="people" data-theme="cream" data-sun="0,0,.85,.13"><h2 className="sr-only">Who we are</h2><WhoWeAre /></section>
+      <section className="section people" id="people" data-theme="cream"><h2 className="sr-only">Who we are</h2><WhoWeAre /></section>
 
-      <section className="section podcast" id="podcast" data-theme="ink" data-sun="0,0,.85,.12">
-        <p className="eyebrow">The Chillchai Podcast</p>
-        <H2 a="Chillchai" b="with Avishi." />
-        <p className="sub" data-reveal>Conversations with people doing cool things at a young age.</p>
+      <section className="section podcast" id="podcast" data-theme="ink">
+        <div className="pod-copy">
+          <p className="eyebrow">The Chillchai Podcast</p>
+          <H2 a="Chillchai" b="with Avishi." />
+          <p className="sub" data-reveal>Conversations with people doing cool things at a young age.</p>
+          <div className="pod-links" data-reveal>{c.podcast.links.map((l, i) => <a key={l.href} className={`pill ${i ? 'ghost' : 'gold'}`} href={l.href} target="_blank" rel="noreferrer">{l.label}<Arrow /></a>)}</div>
+        </div>
         <PodcastCard />
-        <div className="pod-links" data-reveal>{c.podcast.links.map((l, i) => <a key={l.href} className={`pill ${i ? 'ghost' : 'gold'}`} href={l.href} target="_blank" rel="noreferrer">{l.label}<Arrow /></a>)}</div>
       </section>
 
-      <section className="section process" id="process" data-theme="cream" data-sun="0,0,.85,.12">
+      <section className="section process" id="process" data-theme="cream">
         <H2 a="A good brew" b="takes intention." />
         <svg className="flow-line" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0 70 C 140 0, 260 130, 380 66 S 620 0, 750 64 S 900 120, 1000 50" /></svg>
         <ol className="steps">{steps.map(([n, d], i) => <li key={n} data-reveal><span className="sn">0{i + 1}</span><h3>{n}</h3><p>{d}</p></li>)}</ol>
       </section>
 
-      <section className="section contact" id="contact" data-theme="ink" data-sun="0,0,.85,.18">
+      <section className="section contact" id="contact" data-theme="ink">
         <img className="contact-lemon" src={c.brand.logo} alt="" width="120" height="120" loading="lazy" />
         <h2 className="mega"><span className="sr-only">Let’s talk.</span><span aria-hidden="true"><Words text="Let’s" /> <em><Words text="talk." /></em></span></h2>
         <p className="sub" data-reveal>Brand launching soon, or a founder building a personal brand? Tell us what you’re making.</p>
