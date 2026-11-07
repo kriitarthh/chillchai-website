@@ -55,7 +55,7 @@ html.has-cursor,html.has-cursor a,html.has-cursor button{cursor:none}html.has-cu
 /* hero */
 .hero{max-width:none;min-height:100svh;padding:0;display:grid;place-items:center;overflow:hidden;position:relative}
 .hero-word{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;white-space:nowrap;font-size:24.5vw;font-weight:800;letter-spacing:-.065em;line-height:.8;color:#EDB52B;user-select:none}
-.hero-word .li{position:relative}.hero-word .li .lemon{position:absolute;left:50%;top:.015em;width:.3em;height:.3em;margin-left:-.15em;overflow:visible;animation:lspin 8s linear infinite}@keyframes lspin{to{transform:rotate(360deg)}}
+.hero-word .li{position:relative}.hero-word .li .dot{position:absolute;left:50%;top:.075em;width:.2em;height:.2em;margin-left:-.1em;border-radius:50%;overflow:hidden;background:#EDB52B}.hero-word .li .dot img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);opacity:.9;animation:lspin 24s linear infinite}@keyframes lspin{to{transform:rotate(360deg)}}
 .hero-word span{display:inline-block;animation:rise 1.3s cubic-bezier(.22,1,.36,1) backwards;animation-delay:calc(var(--i)*70ms + 150ms)}
 @keyframes rise{from{opacity:0;transform:translateY(55%) rotate(4deg)}}
 .hero-tag{position:relative;z-index:3;text-align:center;margin:0;font-weight:700;font-size:clamp(22px,3vw,44px);line-height:1.12;letter-spacing:-.03em;color:var(--ink);max-width:18em;animation:fade 1.2s .9s backwards}
