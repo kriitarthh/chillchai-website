@@ -86,12 +86,52 @@ const workRows = c.work.projects.filter(p => p.id !== 'client-launch');
 const stats: [string, string][] = [['344K+', 'combined followers & subscribers'], ['60+', 'brand collaborations'], ['5,000+', 'units sold'], ['90–100', 'creators in our network']];
 const steps: [string, string][] = [['Understand', 'Your brand, audience and goal.'], ['Find the story', 'Positioning and ideas worth making.'], ['Make it real', 'Content, creators, campaigns.'], ['Learn & improve', 'See what works. Make the next one better.']];
 
+function Wr({ i, children }: { i: number; children: React.ReactNode }) { return <><span className="wr" data-s={i % 2 ? 'c' : 's'} style={{ ['--w' as string]: i }} aria-hidden="true"><span className="wr-t">{children}</span></span>{' '}</>; }
+const SBAR: [string, string][] = [['home', 'Home'], ['services', 'What we do'], ['numbers', 'Reach'], ['work', 'Work'], ['global', 'Global'], ['people', 'People'], ['podcast', 'Podcast'], ['process', 'Process'], ['contact', 'Contact']];
+function ScrollBar() {
+  const fill = useRef<HTMLSpanElement>(null), head = useRef<HTMLSpanElement>(null), track = useRef<HTMLSpanElement>(null);
+  const [ticks, setTicks] = useState<{ id: string; label: string; p: number }[]>([]);
+  const [active, setActive] = useState('home');
+  const pos = useRef<{ id: string; top: number }[]>([]);
+  useEffect(() => {
+    const measure = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      const list = SBAR.map(([id, label]) => { const el = document.getElementById(id); return el ? { id, label, top: el.getBoundingClientRect().top + scrollY } : null; }).filter(Boolean) as { id: string; label: string; top: number }[];
+      pos.current = list; setTicks(list.map(t => ({ id: t.id, label: t.label, p: Math.min(1, Math.max(0, t.top / max)) })));
+    };
+    measure(); const t1 = setTimeout(measure, 1200), t2 = setTimeout(measure, 4000); addEventListener('resize', measure); addEventListener('load', measure);
+    let cur = 0, raf = 0, act = 'home';
+    const tick = () => {
+      const max = document.documentElement.scrollHeight - innerHeight, t = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      cur += (t - cur) * .12; if (Math.abs(t - cur) < .0004) cur = t;
+      if (fill.current) fill.current.style.transform = `scaleY(${cur})`;
+      if (head.current) head.current.style.transform = `translateY(${cur * 100}%)`;
+      let a = pos.current[0]?.id || 'home'; for (const q of pos.current) if (q.top <= scrollY + innerHeight * .45) a = q.id;
+      if (a !== act) { act = a; setActive(a); }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); clearTimeout(t1); clearTimeout(t2); removeEventListener('resize', measure); removeEventListener('load', measure); };
+  }, []);
+  const go = (id: string) => { const q = pos.current.find(x => x.id === id); if (q) scrollTo({ top: Math.max(0, q.top - (id === 'home' ? 0 : 20)), behavior: 'smooth' }); };
+  const scrub = (e: React.PointerEvent) => {
+    const r = track.current!.getBoundingClientRect(); const f = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    scrollTo({ top: f * (document.documentElement.scrollHeight - innerHeight), behavior: 'auto' });
+  };
+  return <div className="sbar" role="navigation" aria-label="Page progress">
+    <span className="sbar-track" ref={track} onPointerDown={e => { (e.target as Element).closest('.tick') || (e.currentTarget.setPointerCapture(e.pointerId), scrub(e)); }} onPointerMove={e => { if (e.currentTarget.hasPointerCapture(e.pointerId)) scrub(e); }} onPointerUp={e => e.currentTarget.releasePointerCapture(e.pointerId)}>
+      <span className="sbar-fill" ref={fill} /><span className="sbar-head" ref={head}><i /></span>
+      {ticks.map(t => <button key={t.id} className={`tick${active === t.id ? ' on' : ''}`} style={{ top: `${t.p * 100}%` }} onClick={() => go(t.id)} aria-label={`Go to ${t.label}`}><b /><span>{t.label}</span></button>)}
+    </span>
+  </div>;
+}
+
 export default function App() {
   useFlow();
   const [menu, setMenu] = useState(false); const [project, setProject] = useState<Project | null>(null);
   useEffect(() => { if (!menu) return; const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenu(false); }; document.addEventListener('keydown', esc); return () => document.removeEventListener('keydown', esc); }, [menu]);
   return <>
-    <Backdrop /><Cursor />
+    <Backdrop /><Cursor /><ScrollBar />
     <div className="sun" aria-hidden="true"><Sunburst /></div>
     <a className="skip" href="#main">{c.ui.skip}</a>
     <header className="top"><Brand />
@@ -101,8 +141,10 @@ export default function App() {
     </header>
     <main id="main">
       <section className="hero" id="home" data-theme="cream">
-        <div className="hero-word" aria-hidden="true">{[...'chillchai'].map((ch, i) => <span key={i} className={ch === 'i' ? 'li' : undefined} style={{ ['--i' as string]: i }}>{ch === 'i' ? <>ı<span className="dot"><img src="/assets/logo.webp" alt="" /></span></> : ch}</span>)}</div>
-        <h1 className="hero-tag"><span className="sr-only">Chillchai Creations — </span><span className="l1">We build, manage &amp; grow social media</span><span className="l2">for <em>brands</em> and the <em>people</em> behind them.</span></h1>
+        <div className="hero-word" aria-hidden="true">{[...'chillchai'].map((ch, i) => <span key={i} className={ch === 'i' ? 'ch li' : 'ch'} data-s={i % 2 ? 'c' : 's'} style={{ ['--i' as string]: i }}>{ch === 'i' ? <>ı<span className="dot"><img src="/assets/logo.webp" alt="" /></span></> : ch}</span>)}</div>
+        <h1 className="hero-tag"><span className="sr-only">Chillchai Creations — </span>
+          <span className="l1">{['We', 'build,', 'manage', '&', 'grow', 'social', 'media'].map((w, i) => <Wr key={i} i={i}>{w}</Wr>)}</span>
+          <span className="l2">{['for', <em key="b">brands</em>, 'and', 'the', <em key="p">people</em>, 'behind', 'them.'].map((w, i) => <Wr key={i} i={i + 7}>{w}</Wr>)}</span></h1>
         <p className="hero-tagline"><svg className="swoosh" viewBox="0 0 600 22" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M4 13 C 110 2, 230 21, 350 9 S 520 5, 596 12" /></svg><em>{c.brand.tagline}</em></p>
         <p className="hero-social" aria-label="Social links"><a href="https://www.instagram.com/chillchai/" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.youtube.com/@chillchai" target="_blank" rel="noreferrer">YouTube</a></p>
         <a className="scroll-cue" href="#services">Scroll<span aria-hidden="true">↓</span></a>

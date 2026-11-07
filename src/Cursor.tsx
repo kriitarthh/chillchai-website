@@ -18,7 +18,7 @@ export function Cursor() {
     };
     const down = () => s.classList.add('press'), up = () => s.classList.remove('press');
     const leave = () => { shown = false; root.classList.remove('has-cursor'); };
-    const loop = () => { sx += (x - sx) * .16; sy += (y - sy) * .16; lx += (x - lx) * .45; ly += (y - ly) * .45; s.style.transform = `translate3d(${sx}px,${sy}px,0)`; l.style.transform = `translate3d(${lx}px,${ly}px,0)`; raf = requestAnimationFrame(loop); };
+    const loop = () => { sx = lx = x; sy = ly = y; s.style.transform = `translate3d(${sx}px,${sy}px,0)`; l.style.transform = `translate3d(${lx}px,${ly}px,0)`; raf = requestAnimationFrame(loop); };
     addEventListener('pointermove', move, { passive: true }); addEventListener('pointerdown', down); addEventListener('pointerup', up); root.addEventListener('pointerleave', leave);
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); removeEventListener('pointermove', move); removeEventListener('pointerdown', down); removeEventListener('pointerup', up); root.removeEventListener('pointerleave', leave); root.classList.remove('has-cursor'); };

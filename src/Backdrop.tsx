@@ -7,7 +7,7 @@ export function Backdrop() {
     const c = cv.current, g = glow.current; const ctx = c?.getContext('2d'); if (!c || !g || !ctx) return;
     const root = document.documentElement;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, coarse = matchMedia('(pointer: coarse)').matches;
-    const SP = 18; let W = 0, H = 0, raf = 0;
+    const SP = coarse ? 20 : 18, RAD = coarse ? 95 : 150, SW = coarse ? .12 : .34, GR = coarse ? 1.4 : 3.6, GA = coarse ? .4 : .7; let W = 0, H = 0, raf = 0;
     const m = { x: innerWidth * .7, y: innerHeight * .3, tx: innerWidth * .7, ty: innerHeight * .3 };
     let theme = root.dataset.theme === 'ink' ? 1 : 0, sy = scrollY, touched = false;
     const fit = () => { const dpr = Math.min(devicePixelRatio || 1, 1.5); W = innerWidth; H = innerHeight; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); wake(); };
@@ -27,9 +27,9 @@ export function Backdrop() {
       ctx.fillStyle = `rgba(${fr | 0},${fg | 0},${fb | 0},${.13 + .02 * theme})`;
       const near: number[] = []; ctx.beginPath();
       for (let gy = SP / 2; gy < H + SP; gy += SP) for (let gx = SP / 2; gx < W + SP; gx += SP) {
-        const dx = gx - m.x, dy = gy - m.y, infl = Math.exp(-(dx * dx + dy * dy) / (2 * 150 * 150)), s = 1 + .34 * infl;
+        const dx = gx - m.x, dy = gy - m.y, infl = Math.exp(-(dx * dx + dy * dy) / (2 * RAD * RAD)), s = 1 + SW * infl;
         const px = m.x + dx * s, py = m.y + dy * s, w = .5 + .5 * Math.sin(gx * .0022 + gy * .0017 + ph);
-        const r = .35 + w * 1.25 + infl * 3.6;
+        const r = .35 + w * 1.25 + infl * GR;
         if (infl > .07) near.push(px, py, r, infl); else { ctx.moveTo(px + r, py); ctx.arc(px, py, r, 0, 6.283); }
       }
       ctx.fill();
@@ -43,5 +43,5 @@ export function Backdrop() {
     fit(); addEventListener('resize', fit); addEventListener('pointermove', move, { passive: true }); addEventListener('scroll', wake, { passive: true });
     return () => { cancelAnimationFrame(raf); mo.disconnect(); removeEventListener('resize', fit); removeEventListener('pointermove', move); removeEventListener('scroll', wake); };
   }, []);
-  return <div className="bg" aria-hidden="true"><div className="bg-layer bg-cream" /><div className="bg-layer bg-ink" /><div className="bg-glow" ref={glow} /><canvas ref={cv} className="bg-dots" /><div className="bg-grain" /></div>;
+  return <div className="bg" aria-hidden="true"><div className="bg-layer bg-cream" /><div className="bg-layer bg-ink" /><div className="bg-glow" ref={glow} /><canvas ref={cv} className="bg-dots" /><div className="bg-grain" /><div className="bg-vig v-cream" /><div className="bg-vig v-ink" /></div>;
 }
