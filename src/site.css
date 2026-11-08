@@ -145,7 +145,7 @@ html.has-cursor,html.has-cursor a,html.has-cursor button{cursor:none}html.has-cu
 .steps h3{font-size:26px;letter-spacing:-.03em;margin:14px 0 8px}.steps p{margin:0;color:var(--mut)}
 /* contact */
 .contact{max-width:none;text-align:center;padding-top:64px;padding-bottom:0;min-height:0;display:flex;flex-direction:column;align-items:center}
-.contact-lemon{width:clamp(56px,6vw,84px);height:auto;border-radius:50%;margin-bottom:10px}
+.contact-lemon{display:block;margin:0 auto 10px;width:clamp(56px,6vw,84px);height:auto;border-radius:50%;transform-origin:50% 50%}
 .mega{font-size:clamp(56px,8.5vw,128px);font-weight:700;letter-spacing:-.05em;line-height:.92;margin:0 0 30px}.mega em{font-weight:400}
 .contact .sub{margin-inline:auto}
 .contact-actions{display:flex;flex-direction:column;align-items:center;gap:22px}.mail{font-size:20px;border-bottom:1px solid var(--line)}

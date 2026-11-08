@@ -45,7 +45,7 @@ export function useFlow() {
         // Process line draws with scroll.
         gsap.fromTo('.flow-line path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.process', start: 'top 70%', end: 'bottom 70%', scrub: .6 } });
         // Contact lemon rolls in.
-        gsap.fromTo('.contact-lemon', { xPercent: -380, rotation: -540 }, { xPercent: 0, rotation: 0, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top 75%', end: 'center 55%', scrub: 1 } });
+        gsap.fromTo('.contact-lemon', { xPercent: -380, rotation: -435 }, { xPercent: 0, rotation: 0, ease: 'power2.out', scrollTrigger: { trigger: '.contact', start: 'top 85%', end: 'bottom bottom', scrub: 0.6 } });
       });
       document.fonts?.ready.then(() => ScrollTrigger.refresh());
 
