@@ -1687,7 +1687,7 @@ function renderWaitlist(qs){
    '<label class="field"><span class="label">WhatsApp (optional)</span><input type="tel" id="ww" autocomplete="tel" value="+91 "></label>'+
    '<label class="field"><span class="label">City (optional)</span><input type="text" id="wc" autocomplete="address-level2"></label>'+
    (c?'<span class="label" style="font-size:9.5px;color:var(--ink-soft);display:block;margin-bottom:6px">Your archetype</span><span class="arch-chip" style="--c:'+c.color+'">'+esc(c.name)+'</span>':'<p class="g-small" style="margin-bottom:14px">don’t know yours? <a href="#/quiz" class="textlink">find out →</a></p>')+
-   '<div class="checks"><label><input type="checkbox" id="wnotify" checked><span>notify me when it launches</span></label><label><input type="checkbox" id="waff"'+(aff?' checked':'')+'><span>send me my daily affirmation</span></label></div>'+
+   '<div class="checks"><label><input type="checkbox" id="wnotify" checked><span>notify me when it launches</span></label><label><input type="checkbox" id="waff"'+(aff?' checked':'')+'><span>send me an affirmation each month</span></label></div>'+
    '<p class="err" id="werr" role="alert"></p><button class="btn block" id="wgo" type="submit">join the waitlist</button>'+
    '<p class="g-small" style="margin-top:12px">I’m happy to hear from chillchai about the planner. Unsubscribe any time.</p></form></div></div>';
   scatter($('#wls'),22,11,44,[0,16]);
@@ -1698,7 +1698,7 @@ function renderWaitlist(qs){
     if(!EMAILRE.test(em)){err.textContent='that email doesn’t look right.';return}
     var btn=$('#wgo');btn.disabled=true;btn.textContent='one sec…';
     var ww=$('#ww').value.trim();if(ww==='+91')ww='';
-    submitEntry({type:'waitlist',name:name,email:em,whatsapp:ww,city:$('#wc').value.trim(),archetype:S.result?S.result.code:'',notify:[$('#wnotify').checked?'launch':'',$('#waff').checked?'daily affirmation':''].filter(Boolean).join(' + ')})
+    submitEntry({type:'waitlist',name:name,email:em,whatsapp:ww,city:$('#wc').value.trim(),archetype:S.result?S.result.code:'',notify:[$('#wnotify').checked?'launch':'',$('#waff').checked?'monthly affirmation':''].filter(Boolean).join(' + ')})
     .then(function(r){
       btn.disabled=false;btn.textContent='join the waitlist';
       if(r&&r.dup){err.textContent='you’re already on the list ♥';return}

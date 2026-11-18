@@ -14,7 +14,8 @@
  *     (it needs your Sheet and permission to send email).
  *  4. Deploy > New deployment > type "Web app". Execute as: Me. Who has access: Anyone.
  *     Copy the Web app URL.
- *  5. In the website repo open public/planner/index.html, find  WAITLIST_ENDPOINT: ''  near the top
+ *  5. (For monthly affirmations) pick the function "setupMonthlyTrigger" and click Run once. Done.
+ *  6. In the website repo open public/planner/index.html, find  WAITLIST_ENDPOINT: ''  near the top
  *     of the first script, paste the URL between the quotes, save, commit and push.
  *
  * Emails are sent from the Google account that deploys this script. The email pictures load from
@@ -477,6 +478,23 @@ function buildWaitlistEmail(d) {
   return { subject: 'you’re on the list, ' + name + ' ✦', html: emShell(h, 'we’ll tell you the second the planner is live.'), text: text };
 }
 
+/* one affirmation a month for people who opted in. d: {name, email, archetype}, idx: running month number */
+function buildMonthlyEmail(d, idx, monthName) {
+  var c = C[d.archetype];
+  var name = (d.name || '').trim() || 'you';
+  var aff = c.affs[idx % c.affs.length];
+  var h = '';
+  h += emRow('<div style="padding:6px 0 18px;">' + emLabel('Chillchai · ' + monthName, EM.gold) + '</div>');
+  h += emRow('<div style="padding:46px 30px 40px;">' + emLabel('Your affirmation for ' + monthName, EM.soft) +
+    '<div style="font-family:' + EM.serif + ';font-style:italic;font-weight:300;font-size:38px;line-height:44px;color:' + EM.ink + ';margin:22px 0 22px;">' + emEsc(aff) + '</div>' +
+    '<div style="color:' + EM.gold + ';font-size:22px;">✦ &nbsp; ✦ &nbsp; ✦</div>' +
+    '<div style="font-family:' + EM.serif + ';font-style:italic;font-size:18px;line-height:26px;color:' + EM.soft + ';margin:22px 0 26px;">' + emEsc(name) + ', you’re ' + emEsc(c.name) + '. say it out loud once, then go get sh✦t done.</div>' +
+    emBtn('https://www.chillchai.in/planner/#/result/' + d.archetype + '?skip=1', 'open my kit') +
+    '<div style="margin-top:28px;">' + emSignature() + '</div></div>', '0', c.ground, 'border-radius:24px;');
+  h += emRow('<div style="padding:22px 20px;font-family:' + EM.serif + ';font-style:italic;font-size:13px;line-height:19px;color:#8A847E;">you’re getting this because you asked for a monthly affirmation. reply “stop” any time and we’ll take you off the list.</div>');
+  return { subject: monthName + ' affirmation ✦ ' + aff, html: emShell(h, aff), text: aff + '\n\nbrewed with love,\navishi\n\nreply "stop" to unsubscribe.' };
+}
+
 
 function sheet_() {
   var ss = SpreadsheetApp.openById(SHEET_ID);
@@ -503,6 +521,30 @@ function send_(d) {
   if (!m) return 'n/a';
   MailApp.sendEmail({ to: d.email, cc: CC, replyTo: CC, name: FROM_NAME, subject: m.subject, htmlBody: m.html, body: m.text });
   return 'yes';
+}
+
+/* ---- monthly affirmations ----
+ * Run setupMonthlyTrigger once. On the 1st of every month it emails one affirmation to everyone who ticked
+ * "send me an affirmation each month" (one email each, no CC, so it uses 1 quota per person). */
+function setupMonthlyTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) { if (t.getHandlerFunction() === 'sendMonthlyAffirmations') ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger('sendMonthlyAffirmations').timeBased().onMonthDay(1).atHour(9).create();
+}
+function sendMonthlyAffirmations() {
+  var rows = sheet_().getDataRange().getValues(), head = rows.shift();
+  var ix = {}; head.forEach(function (h, i) { ix[h] = i; });
+  var arch = {};
+  rows.forEach(function (r) { var e = String(r[ix.email]).toLowerCase(); if (r[ix.archetype] && C[r[ix.archetype]]) arch[e] = r[ix.archetype]; });
+  var seen = {}, now = new Date(), idx = now.getFullYear() * 12 + now.getMonth();
+  var month = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'][now.getMonth()];
+  rows.forEach(function (r) {
+    var e = String(r[ix.email]).toLowerCase();
+    if (seen[e] || String(r[ix.notify]).indexOf('monthly affirmation') < 0 || !arch[e]) return;
+    seen[e] = 1;
+    if (MailApp.getRemainingDailyQuota() < 1) return;
+    var m = buildMonthlyEmail({ name: r[ix.name], email: e, archetype: arch[e] }, idx, month);
+    MailApp.sendEmail({ to: e, replyTo: CC, name: FROM_NAME, subject: m.subject, htmlBody: m.html, body: m.text });
+  });
 }
 
 function doPost(e) {
