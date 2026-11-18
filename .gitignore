@@ -9,3 +9,9 @@ dist/
 *.log
 .vite/
 assets/*.mov
+
+# planner source references (originals; web copies live in public/planner)
+GWGSD 2027 Design References/
+
+# local review files
+_review/
